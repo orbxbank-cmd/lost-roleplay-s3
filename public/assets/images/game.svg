@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+  <defs>
+    <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e91e63"/>
+      <stop offset="100%" stop-color="#ff6b9d"/>
+    </linearGradient>
+  </defs>
+  <rect width="50" height="50" rx="10" fill="url(#gg)"/>
+  <text x="25" y="36" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="white">🎮</text>
+</svg>

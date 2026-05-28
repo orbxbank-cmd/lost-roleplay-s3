@@ -1,0 +1,10 @@
+node_modules
+.git
+.gitignore
+.vscode
+logs/*
+!logs/.gitkeep
+backup
+*.md
+.DS_Store
+Thumbs.db
