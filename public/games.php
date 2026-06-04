@@ -11,24 +11,24 @@ $user = $loggedIn ? \Core\Auth::user() : null;
 
 function updateDaily($db, $userId, $field, $inc = 1) {
     $today = date('Y-m-d');
-    $db->query("INSERT INTO user_daily (user_id, date, $field) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE $field = $field + ?",
+    $db->query("INSERT INTO shop_shop_user_daily (user_id, date, $field) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE $field = $field + ?",
         [$userId, $today, $inc, $inc]);
 }
 
 function checkMissions($db, $userId) {
     $today = date('Y-m-d');
-    $missions = $db->fetchAll("SELECT * FROM daily_missions WHERE active = 1");
-    $daily = $db->fetch("SELECT * FROM user_daily WHERE user_id = ? AND date = ?", [$userId, $today]);
+    $missions = $db->fetchAll("SELECT * FROM shop_daily_missions WHERE active = 1");
+    $daily = $db->fetch("SELECT * FROM shop_user_daily WHERE user_id = ? AND date = ?", [$userId, $today]);
     if (!$daily) {
-        $db->query("INSERT INTO user_daily (user_id, date) VALUES (?, ?)", [$userId, $today]);
-        $daily = $db->fetch("SELECT * FROM user_daily WHERE user_id = ? AND date = ?", [$userId, $today]);
+        $db->query("INSERT INTO shop_user_daily (user_id, date) VALUES (?, ?)", [$userId, $today]);
+        $daily = $db->fetch("SELECT * FROM shop_user_daily WHERE user_id = ? AND date = ?", [$userId, $today]);
     }
     $results = [];
     foreach ($missions as $m) {
         $progress = (int)($daily[$m['type']] ?? 0);
         $done = $progress >= $m['target'];
         try {
-            $claimed = $db->fetch("SELECT id FROM user_daily WHERE user_id = ? AND date = ? AND {$m['type']}_claimed = 1", [$userId, $today]);
+            $claimed = $db->fetch("SELECT id FROM shop_user_daily WHERE user_id = ? AND date = ? AND {$m['type']}_claimed = 1", [$userId, $today]);
             $isClaimed = (bool)$claimed;
         } catch (\Exception $e) {
             $isClaimed = false;
@@ -49,22 +49,22 @@ function checkMissions($db, $userId) {
 
 function autoClaimMissions($db, $userId) {
     $today = date('Y-m-d');
-    // Check if user_daily has claimed columns, add them if not
+    // Check if shop_user_daily has claimed columns, add them if not
     try {
-        $missions = $db->fetchAll("SELECT * FROM daily_missions WHERE active = 1");
+        $missions = $db->fetchAll("SELECT * FROM shop_daily_missions WHERE active = 1");
         foreach ($missions as $m) {
             $type = $m['type'];
             $needsClaim = $type . '_claimed';
             // Check if the column exists
-            $cols = $db->fetchAll("SHOW COLUMNS FROM user_daily LIKE ?", [$needsClaim]);
+            $cols = $db->fetchAll("SHOW COLUMNS FROM shop_user_daily LIKE ?", [$needsClaim]);
             if (empty($cols)) {
-                $db->query("ALTER TABLE user_daily ADD COLUMN $needsClaim TINYINT DEFAULT 0");
+                $db->query("ALTER TABLE shop_user_daily ADD COLUMN $needsClaim TINYINT DEFAULT 0");
             }
-            $daily = $db->fetch("SELECT $type, $needsClaim FROM user_daily WHERE user_id = ? AND date = ?", [$userId, $today]);
+            $daily = $db->fetch("SELECT $type, $needsClaim FROM shop_user_daily WHERE user_id = ? AND date = ?", [$userId, $today]);
             if ($daily && (int)$daily[$type] >= (int)$m['target'] && !(int)$daily[$needsClaim]) {
                 $db->query("UPDATE shop_users SET coins = coins + ? WHERE id = ?", [$m['reward'], $userId]);
                 $db->insert('coin_transactions', ['user_id' => $userId, 'amount' => $m['reward'], 'type' => 'bonus', 'description' => 'Daily Mission: ' . $m['title']]);
-                $db->query("UPDATE user_daily SET $needsClaim = 1 WHERE user_id = ? AND date = ?", [$userId, $today]);
+                $db->query("UPDATE shop_user_daily SET $needsClaim = 1 WHERE user_id = ? AND date = ?", [$userId, $today]);
             }
         }
     } catch (\Exception $e) {}

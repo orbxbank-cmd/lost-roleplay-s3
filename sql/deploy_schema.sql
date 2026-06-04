@@ -174,6 +174,40 @@ CREATE TABLE IF NOT EXISTS shop_bundles (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS shop_daily_missions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(50) NOT NULL UNIQUE,
+  label VARCHAR(255) NOT NULL,
+  target INT NOT NULL,
+  reward INT NOT NULL DEFAULT 10,
+  active TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB;
+
+INSERT INTO shop_daily_missions (type, label, target, reward) VALUES
+('wheel_spins', 'Spin the Lucky Wheel', 1, 10),
+('dn_plays', 'Play Guess the Number', 3, 15),
+('dice_plays', 'Play Dice Duel', 3, 15),
+('mystery_boxes', 'Open Mystery Boxes', 1, 20),
+('coins_won', 'Win coins from games', 100, 25);
+
+CREATE TABLE IF NOT EXISTS shop_user_daily (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  date DATE NOT NULL,
+  wheel_spins INT DEFAULT 0,
+  dn_plays INT DEFAULT 0,
+  dice_plays INT DEFAULT 0,
+  mystery_boxes INT DEFAULT 0,
+  coins_won INT DEFAULT 0,
+  wheel_spins_claimed TINYINT DEFAULT 0,
+  dn_plays_claimed TINYINT DEFAULT 0,
+  dice_plays_claimed TINYINT DEFAULT 0,
+  mystery_boxes_claimed TINYINT DEFAULT 0,
+  coins_won_claimed TINYINT DEFAULT 0,
+  UNIQUE KEY unique_daily (user_id, date),
+  FOREIGN KEY (user_id) REFERENCES shop_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS shop_bundle_products (
   id INT AUTO_INCREMENT PRIMARY KEY,
   bundle_id INT NOT NULL,
