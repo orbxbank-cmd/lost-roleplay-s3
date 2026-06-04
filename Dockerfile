@@ -13,7 +13,8 @@ RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/Allo
 COPY . /var/www/html/
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html && \
+RUN mkdir -p /var/www/html/uploads /var/www/html/public/assets/images/products && \
+    chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html && \
     chmod -R 777 /var/www/html/uploads /var/www/html/public/assets/images/products
 
