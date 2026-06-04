@@ -83,7 +83,7 @@ class Auth
                     // Award 50 coins to referrer
                     $db->query("UPDATE shop_users SET coins = coins + 50 WHERE id = ?", [$referredBy]);
                     $db->query(
-                        "INSERT INTO referral_transactions (referrer_id, referred_username, amount, type, created_at) VALUES (?, ?, 50, 'signup', NOW())",
+                        "INSERT INTO shop_referral_transactions (referrer_id, referred_username, amount, type, created_at) VALUES (?, ?, 50, 'signup', NOW())",
                         [$referredBy, $gameUser['username']]
                     );
                     Logger::info('Referral signup bonus awarded', ['referrer' => $referredBy, 'referred' => $gameUser['username']]);

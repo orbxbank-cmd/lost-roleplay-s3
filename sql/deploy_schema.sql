@@ -136,6 +136,19 @@ CREATE TABLE IF NOT EXISTS shop_gift_cards (
   FOREIGN KEY (used_by) REFERENCES shop_users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS shop_referral_transactions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  referrer_id INT NOT NULL,
+  referred_user_id INT DEFAULT NULL,
+  referred_username VARCHAR(50) DEFAULT NULL,
+  type VARCHAR(50) NOT NULL,
+  coins INT DEFAULT 0,
+  amount DECIMAL(10,2) DEFAULT NULL,
+  order_id INT DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (referrer_id) REFERENCES shop_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS shop_unban_requests (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) NOT NULL,

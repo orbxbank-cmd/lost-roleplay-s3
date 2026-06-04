@@ -11,7 +11,7 @@ $user = $loggedIn ? \Core\Auth::user() : null;
 
 function updateDaily($db, $userId, $field, $inc = 1) {
     $today = date('Y-m-d');
-    $db->query("INSERT INTO shop_shop_user_daily (user_id, date, $field) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE $field = $field + ?",
+    $db->query("INSERT INTO shop_user_daily (user_id, date, $field) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE $field = $field + ?",
         [$userId, $today, $inc, $inc]);
 }
 
@@ -35,8 +35,8 @@ function checkMissions($db, $userId) {
         }
         $results[] = [
             'id' => $m['id'],
-            'title' => $m['title'],
-            'desc' => $m['description'],
+            'title' => $m['label'],
+            'desc' => '',
             'progress' => $progress,
             'target' => (int)$m['target'],
             'reward' => (int)$m['reward'],
@@ -63,7 +63,7 @@ function autoClaimMissions($db, $userId) {
             $daily = $db->fetch("SELECT $type, $needsClaim FROM shop_user_daily WHERE user_id = ? AND date = ?", [$userId, $today]);
             if ($daily && (int)$daily[$type] >= (int)$m['target'] && !(int)$daily[$needsClaim]) {
                 $db->query("UPDATE shop_users SET coins = coins + ? WHERE id = ?", [$m['reward'], $userId]);
-                $db->insert('coin_transactions', ['user_id' => $userId, 'amount' => $m['reward'], 'type' => 'bonus', 'description' => 'Daily Mission: ' . $m['title']]);
+                $db->insert('coin_transactions', ['user_id' => $userId, 'amount' => $m['reward'], 'type' => 'bonus', 'description' => 'Daily Mission: ' . $m['label']]);
                 $db->query("UPDATE shop_user_daily SET $needsClaim = 1 WHERE user_id = ? AND date = ?", [$userId, $today]);
             }
         }
@@ -234,7 +234,7 @@ $missions = $loggedIn ? checkMissions($db, $user['id']) : [];
                 <?php foreach ($missions as $m): ?>
                 <div class="mission-item" data-id="<?= $m['id'] ?>" style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:<?= $m['done'] && !$m['claimed'] ? 'rgba(255,193,7,0.1)' : 'var(--bg-input)' ?>;border-radius:6px;border:1px solid <?= $m['done'] && !$m['claimed'] ? 'var(--accent)' : 'var(--border)' ?>;">
                     <div style="flex:1;min-width:0;">
-                        <div style="font-size:0.78rem;font-weight:600;"><?= $m['title'] ?> <?php if ($m['claimed']): ?><span style="color:var(--success);font-size:0.65rem;"><i class="fas fa-check-circle"></i> Done</span><?php elseif ($m['done']): ?><span style="color:var(--accent);font-size:0.65rem;"><i class="fas fa-star"></i> Claimed!</span><?php endif; ?></div>
+                        <div style="font-size:0.78rem;font-weight:600;"><?= $m['label'] ?> <?php if ($m['claimed']): ?><span style="color:var(--success);font-size:0.65rem;"><i class="fas fa-check-circle"></i> Done</span><?php elseif ($m['done']): ?><span style="color:var(--accent);font-size:0.65rem;"><i class="fas fa-star"></i> Claimed!</span><?php endif; ?></div>
                         <div style="font-size:0.68rem;color:var(--text-muted);"><?= $m['desc'] ?></div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">

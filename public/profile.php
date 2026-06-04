@@ -109,7 +109,7 @@ $referralCode = $user['referral_code'] ?? '';
 $referralCount = $db->fetch("SELECT COUNT(*) as cnt FROM shop_users WHERE referred_by = ?", [$user['id']])['cnt'] ?? 0;
 $referralEarnings = $user['total_referral_earnings'] ?? 0;
 $referralTransactions = $db->fetchAll(
-    "SELECT * FROM referral_transactions WHERE referrer_id = ? ORDER BY created_at DESC LIMIT 10",
+    "SELECT * FROM shop_referral_transactions WHERE referrer_id = ? ORDER BY created_at DESC LIMIT 10",
     [$user['id']]
 );
 
