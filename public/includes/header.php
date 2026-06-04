@@ -24,7 +24,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
     <div class="container">
         <a href="index.php" class="navbar-brand">
             <img src="assets/images/game.png" alt="GTA" style="height: 32px; width: auto;">
-            <img src="assets/images/logo.png" alt="Lost Roleplay" style="height: 32px; width: auto;">
+            <img src="assets/images/logo.png" alt="Lost RoLePLay S03" style="height: 32px; width: auto;">
             <span class="gta-logo-text">
                 <span class="san">Lost</span> <span class="andreas">Roleplay</span>
             </span>

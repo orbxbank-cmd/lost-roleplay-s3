@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'app_name' => 'Lost Roleplay Shop',
+    'app_name' => 'Lost RoLePLay S03',
     'app_url' => getenv('APP_URL') ?: 'http://localhost/lost-roleplay-shop',
     'timezone' => 'Africa/Casablanca',
     'currency' => 'MAD',
