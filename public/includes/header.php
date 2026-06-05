@@ -29,6 +29,9 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
                 <span class="san">Lost</span> <span class="andreas">Roleplay</span>
             </span>
         </a>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
         <ul class="navbar-links">
             <li><a href="index.php" class="<?= $currentPage === 'index.php' ? 'active' : '' ?>"><i class="fas fa-home"></i> Home</a></li>
             <li><a href="shop.php" class="<?= $currentPage === 'shop.php' ? 'active' : '' ?>"><i class="fas fa-store"></i> Shop</a></li>
@@ -57,3 +60,65 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         </ul>
     </div>
 </nav>
+
+<!-- Mobile Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<nav class="mobile-sidebar" id="mobileSidebar">
+    <div class="sidebar-header">
+        <a href="index.php" class="sidebar-brand">
+            <img src="assets/images/logo.png" alt="Lost RoLePLay S03" style="height:32px;">
+            <span class="gta-logo-text"><span class="san">Lost</span> <span class="andreas">Roleplay</span></span>
+        </a>
+        <button class="sidebar-close" id="sidebarClose">&times;</button>
+    </div>
+    <?php if (\Core\Auth::isLoggedIn()):
+        $u = \Core\Auth::user(); ?>
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar"><i class="fas fa-user-circle"></i></div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name"><?= htmlspecialchars(\Core\Auth::username()) ?></div>
+                <div class="sidebar-user-coins"><i class="fas fa-coins" style="color:var(--accent);"></i> <?= number_format($u['coins'] ?? 0) ?> coins</div>
+            </div>
+        </div>
+    <?php endif; ?>
+    <ul class="sidebar-links">
+        <li><a href="index.php" class="<?= $currentPage === 'index.php' ? 'active' : '' ?>"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="shop.php" class="<?= $currentPage === 'shop.php' ? 'active' : '' ?>"><i class="fas fa-store"></i> Shop</a></li>
+        <li><a href="dailyreward.php" class="<?= $currentPage === 'dailyreward.php' ? 'active' : '' ?>"><i class="fas fa-calendar-day"></i> Daily</a></li>
+        <li><a href="games.php" class="<?= $currentPage === 'games.php' ? 'active' : '' ?>"><i class="fas fa-gamepad"></i> Games</a></li>
+        <li><a href="badges.php" class="<?= $currentPage === 'badges.php' ? 'active' : '' ?>"><i class="fas fa-medal"></i> Badges</a></li>
+        <li><a href="referral.php" class="<?= $currentPage === 'referral.php' ? 'active' : '' ?>"><i class="fas fa-gift"></i> Referral</a></li>
+        <li><a href="cart.php" class="<?= $currentPage === 'cart.php' ? 'active' : '' ?>"><i class="fas fa-shopping-cart"></i> Cart <?php if (\Core\Auth::isLoggedIn()): $cartCount = $db->fetch("SELECT COUNT(*) as cnt FROM shop_cart WHERE user_id = ?", [$u['id']])['cnt'] ?? 0; if ($cartCount > 0): ?><span class="sidebar-badge"><?= $cartCount ?></span><?php endif; endif; ?></a></li>
+        <?php if (\Core\Auth::isLoggedIn()): ?>
+            <li><a href="sendcoins.php" class="<?= $currentPage === 'sendcoins.php' ? 'active' : '' ?>"><i class="fas fa-paper-plane"></i> Send Coins</a></li>
+            <li><a href="profile.php" class="<?= $currentPage === 'profile.php' ? 'active' : '' ?>"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="orders.php" class="<?= $currentPage === 'orders.php' ? 'active' : '' ?>"><i class="fas fa-clipboard-list"></i> Orders</a></li>
+            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <?php else: ?>
+            <li><a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            <li><a href="register.php"><i class="fas fa-user-plus"></i> Register</a></li>
+        <?php endif; ?>
+    </ul>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var hamburger = document.getElementById('hamburger');
+    var sidebar = document.getElementById('mobileSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    var closeBtn = document.getElementById('sidebarClose');
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    hamburger.addEventListener('click', openSidebar);
+    closeBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+});
+</script>
