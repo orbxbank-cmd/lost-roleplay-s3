@@ -234,7 +234,7 @@ $missions = $loggedIn ? checkMissions($db, $user['id']) : [];
                 <?php foreach ($missions as $m): ?>
                 <div class="mission-item" data-id="<?= $m['id'] ?>" style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:<?= $m['done'] && !$m['claimed'] ? 'rgba(255,193,7,0.1)' : 'var(--bg-input)' ?>;border-radius:6px;border:1px solid <?= $m['done'] && !$m['claimed'] ? 'var(--accent)' : 'var(--border)' ?>;">
                     <div style="flex:1;min-width:0;">
-                        <div style="font-size:0.78rem;font-weight:600;"><?= $m['label'] ?> <?php if ($m['claimed']): ?><span style="color:var(--success);font-size:0.65rem;"><i class="fas fa-check-circle"></i> Done</span><?php elseif ($m['done']): ?><span style="color:var(--accent);font-size:0.65rem;"><i class="fas fa-star"></i> Claimed!</span><?php endif; ?></div>
+                        <div style="font-size:0.78rem;font-weight:600;"><?= $m['title'] ?> <?php if ($m['claimed']): ?><span style="color:var(--success);font-size:0.65rem;"><i class="fas fa-check-circle"></i> Done</span><?php elseif ($m['done']): ?><span style="color:var(--accent);font-size:0.65rem;"><i class="fas fa-star"></i> Claimed!</span><?php endif; ?></div>
                         <div style="font-size:0.68rem;color:var(--text-muted);"><?= $m['desc'] ?></div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">
