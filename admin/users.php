@@ -269,6 +269,9 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
                                         <?= $user['is_admin'] ? '<i class="fas fa-user"></i>' : '<i class="fas fa-shield"></i>' ?>
                                     </button>
                                 </form>
+                                                                <button class="btn btn-sm btn-warning" onclick="togglePasswordForm(<?= $user['id'] ?>)">
+                                    <i class="fas fa-key"></i>
+                                </button>
                                 <?php if ($user['id'] !== \Core\Auth::userId()): ?>
                                     <form method="POST" style="display:inline;" onsubmit="return confirm('Delete <?= htmlspecialchars($user['username']) ?>?')">
                                         <input type="hidden" name="action" value="delete">
@@ -276,6 +279,16 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
                                         <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                     </form>
                                 <?php endif; ?>
+                            </div>
+
+                            <!-- Password Form (hidden) -->
+                            <div id="password-form-<?= $user['id'] ?>" style="display: none; margin-top: 0.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem;">
+                                <form method="POST" style="display: flex; gap: 0.3rem; align-items: center;">
+                                    <input type="hidden" name="action" value="edit_user">
+                                    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                    <input type="password" name="password" class="form-control" placeholder="New password (synced to game)" required style="flex: 1; min-width: 120px; padding: 0.3rem;">
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Change</button>
+                                </form>
                             </div>
 
                             <!-- Coin Form (hidden) -->
@@ -323,4 +336,18 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
     </table>
 </div>
 
+<script>
+function toggleCoinForm(id) {
+    var f = document.getElementById('coin-form-' + id);
+    var p = document.getElementById('password-form-' + id);
+    if (p) p.style.display = 'none';
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+function togglePasswordForm(id) {
+    var f = document.getElementById('password-form-' + id);
+    var c = document.getElementById('coin-form-' + id);
+    if (c) c.style.display = 'none';
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+</script>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
