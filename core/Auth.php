@@ -108,6 +108,17 @@ class Auth
         Session::set('is_admin', (bool) ($local['is_admin'] ?? false));
 
         Logger::info('Login successful', ['username' => $username]);
+
+        // Log login attempt
+        try {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+            $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+            $db->query("INSERT INTO shop_login_logs (user_id, ip, user_agent, action, success) VALUES (?, ?, ?, 'login', 1)",
+                [$local['id'], $ip, $ua]);
+        } catch (\Exception $e) {
+            // Don't block login if logging fails
+        }
+
         return true;
     }
 

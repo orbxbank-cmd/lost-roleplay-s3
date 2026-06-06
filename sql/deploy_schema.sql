@@ -230,6 +230,31 @@ CREATE TABLE IF NOT EXISTS shop_bundle_products (
   FOREIGN KEY (product_id) REFERENCES shop_products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS shop_login_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  ip VARCHAR(45) NOT NULL,
+  user_agent VARCHAR(255) DEFAULT NULL,
+  action ENUM('login','logout','password_change') DEFAULT 'login',
+  success TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES shop_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS shop_recovery_requests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT DEFAULT NULL,
+  ingame_name VARCHAR(50) NOT NULL,
+  contact_info VARCHAR(255) DEFAULT NULL,
+  reason TEXT NOT NULL,
+  ip VARCHAR(45) DEFAULT NULL,
+  status ENUM('pending','approved','rejected') DEFAULT 'pending',
+  admin_note TEXT DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES shop_users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
 -- Default data
 INSERT INTO shop_categories (name, slug, icon, sort_order) VALUES
 ('Admin', 'admin', 'shield', 1),
