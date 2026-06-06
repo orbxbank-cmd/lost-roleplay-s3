@@ -261,9 +261,7 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
                         <td><?= date('Y-m-d', strtotime($user['created_at'])) ?></td>
                         <td>
                             <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
-                                <button class="btn btn-sm btn-secondary" onclick="toggleEditForm(<?= $user['id'] ?>)">
-                                    <i class="fas fa-pen"></i>
-                                </button>
+
                                 <form method="POST" style="display:inline;">
                                     <input type="hidden" name="action" value="toggle_admin">
                                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
