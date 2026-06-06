@@ -135,9 +135,22 @@ class Auth
     public static function requireAuth(): void
     {
         if (!self::isLoggedIn()) {
-            header('Location: /lost-roleplay-shop/public/login.php');
+            header('Location: login.php');
             exit;
         }
+    }
+
+    public static function requireAdmin(): void
+    {
+        if (!self::isLoggedIn()) {
+            header('Location: login.php');
+            exit;
+        }
+        if (!self::isAdmin()) {
+            header('Location: login.php');
+            exit;
+        }
+    }
     }
 
     public static function requireAdmin(): void
