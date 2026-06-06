@@ -89,7 +89,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         <li><a href="games.php" class="<?= $currentPage === 'games.php' ? 'active' : '' ?>"><i class="fas fa-gamepad"></i> Games</a></li>
         <li><a href="badges.php" class="<?= $currentPage === 'badges.php' ? 'active' : '' ?>"><i class="fas fa-medal"></i> Badges</a></li>
         <li><a href="referral.php" class="<?= $currentPage === 'referral.php' ? 'active' : '' ?>"><i class="fas fa-gift"></i> Referral</a></li>
-        <li><a href="cart.php" class="<?= $currentPage === 'cart.php' ? 'active' : '' ?>"><i class="fas fa-shopping-cart"></i> Cart <?php if (\Core\Auth::isLoggedIn()): $cartCount = $db->fetch("SELECT COUNT(*) as cnt FROM shop_cart WHERE user_id = ?", [$u['id']])['cnt'] ?? 0; if ($cartCount > 0): ?><span class="sidebar-badge"><?= $cartCount ?></span><?php endif; endif; ?></a></li>
+        <li><a href="cart.php" class="<?= $currentPage === 'cart.php' ? 'active' : '' ?>"><i class="fas fa-shopping-cart"></i> Cart</a></li>
         <?php if (\Core\Auth::isLoggedIn()): ?>
             <li><a href="sendcoins.php" class="<?= $currentPage === 'sendcoins.php' ? 'active' : '' ?>"><i class="fas fa-paper-plane"></i> Send Coins</a></li>
             <li><a href="profile.php" class="<?= $currentPage === 'profile.php' ? 'active' : '' ?>"><i class="fas fa-user"></i> Profile</a></li>
