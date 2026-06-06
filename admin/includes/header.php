@@ -104,6 +104,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         <a href="gift_cards.php" class="<?= $currentPage === 'gift_cards.php' ? 'active' : '' ?>">🎁 كودات الهدايا</a>
         <a href="coin_purchases.php" class="<?= $currentPage === 'coin_purchases.php' ? 'active' : '' ?>">🪙 طلبات الشحن</a>
         <a href="leaderboard_rewards.php" class="<?= $currentPage === 'leaderboard_rewards.php' ? 'active' : '' ?>">🏆 مكافآت التوب</a>
+        <a href="deliver.php" class="<?= $currentPage === 'deliver.php' ? 'active' : '' ?>">🚚 توصيل مباشر</a>
         <hr style="border-color: var(--border); margin: 1rem 0;">
         <a href="../public/index.php">🏠 العودة للمتجر</a>
         <a href="../public/logout.php">🚪 تسجيل خروج</a>

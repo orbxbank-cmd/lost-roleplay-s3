@@ -5,15 +5,15 @@ require_once __DIR__ . '/includes/header.php';
 $db = \Core\Database::getInstance();
 
 $stats = [
-    'products' => $db->fetch("SELECT COUNT(*) as count FROM products WHERE is_active = 1")['count'],
-    'orders' => $db->fetch("SELECT COUNT(*) as count FROM orders")['count'],
-    'pending_orders' => $db->fetch("SELECT COUNT(*) as count FROM orders WHERE order_status = 'pending'")['count'],
-    'users' => $db->fetch("SELECT COUNT(*) as count FROM users WHERE is_admin = 0")['count'],
-    'revenue' => $db->fetch("SELECT COALESCE(SUM(total), 0) as total FROM orders WHERE payment_status IN ('confirmed', 'completed')")['total'],
-    'pending_payments' => $db->fetch("SELECT COUNT(*) as count FROM orders WHERE payment_status = 'pending'")['count'],
+    'products' => $db->fetch("SELECT COUNT(*) as count FROM shop_products WHERE is_active = 1")['count'],
+    'orders' => $db->fetch("SELECT COUNT(*) as count FROM shop_orders")['count'],
+    'pending_orders' => $db->fetch("SELECT COUNT(*) as count FROM shop_orders WHERE order_status = 'pending'")['count'],
+    'users' => $db->fetch("SELECT COUNT(*) as count FROM shop_users WHERE is_admin = 0")['count'],
+    'revenue' => $db->fetch("SELECT COALESCE(SUM(total), 0) as total FROM shop_orders WHERE payment_status IN ('confirmed', 'completed')")['total'],
+    'pending_payments' => $db->fetch("SELECT COUNT(*) as count FROM shop_orders WHERE payment_status = 'pending'")['count'],
 ];
 
-$recentOrders = $db->fetchAll("SELECT * FROM orders ORDER BY created_at DESC LIMIT 10");
+$recentOrders = $db->fetchAll("SELECT * FROM shop_orders ORDER BY created_at DESC LIMIT 10");
 ?>
 <div class="admin-header">
     <h2>📊 الإحصائيات</h2>

@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'toggle_admin') {
         $userId = (int)$_POST['user_id'];
-        $user = $db->fetch("SELECT is_admin FROM users WHERE id = ?", [$userId]);
+        $user = $db->fetch("SELECT is_admin FROM shop_users WHERE id = ?", [$userId]);
         if ($user) {
             $newAdmin = $user['is_admin'] ? 0 : 1;
             $db->update('users', ['is_admin' => $newAdmin], 'id = :id', ['id' => $userId]);
@@ -64,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reason = trim($_POST['reason'] ?? '');
 
         if ($amount > 0) {
-            $db->query("UPDATE users SET coins = coins + ? WHERE id = ?", [$amount, $userId]);
+            $db->query("UPDATE shop_users SET coins = coins + ? WHERE id = ?", [$amount, $userId]);
             $db->insert('coin_transactions', [
                 'user_id' => $userId,
                 'amount' => $amount,
                 'type' => 'admin',
                 'description' => $reason ?: 'Admin added coins',
             ]);
-            $user = $db->fetch("SELECT username FROM users WHERE id = ?", [$userId]);
+            $user = $db->fetch("SELECT username FROM shop_users WHERE id = ?", [$userId]);
             \Core\Logger::info("Added $amount coins to {$user['username']}");
             $message = "Added $amount coins to {$user['username']}";
         }
@@ -83,14 +83,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reason = trim($_POST['reason'] ?? '');
 
         if ($amount > 0) {
-            $db->query("UPDATE users SET coins = GREATEST(coins - ?, 0) WHERE id = ?", [$amount, $userId]);
+            $db->query("UPDATE shop_users SET coins = GREATEST(coins - ?, 0) WHERE id = ?", [$amount, $userId]);
             $db->insert('coin_transactions', [
                 'user_id' => $userId,
                 'amount' => -$amount,
                 'type' => 'admin',
                 'description' => $reason ?: 'Admin removed coins',
             ]);
-            $user = $db->fetch("SELECT username FROM users WHERE id = ?", [$userId]);
+            $user = $db->fetch("SELECT username FROM shop_users WHERE id = ?", [$userId]);
             \Core\Logger::info("Removed $amount coins from {$user['username']}");
             $message = "Removed $amount coins from {$user['username']}";
         }
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newBalance = (int)$_POST['coins'];
         $reason = trim($_POST['reason'] ?? '');
 
-        $user = $db->fetch("SELECT username, coins FROM users WHERE id = ?", [$userId]);
+        $user = $db->fetch("SELECT username, coins FROM shop_users WHERE id = ?", [$userId]);
         if ($user) {
             $diff = $newBalance - $user['coins'];
             $db->update('users', ['coins' => $newBalance], 'id = :id', ['id' => $userId]);
@@ -123,6 +123,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fields = [];
         $params = [];
 
+        if (isset($_POST['username']) && trim($_POST['username']) !== '') {
+            $newUsername = trim($_POST['username']);
+            $fields[] = "username = ?";
+            $params[] = $newUsername;
+            // Also update in-game name if game_uid exists
+            $u = $db->fetch("SELECT game_uid FROM shop_users WHERE id = ?", [$userId]);
+            if ($u && $u['game_uid']) {
+                try {
+                    $cfg = require __DIR__ . '/../config/game_database.php';
+                    $dsn = "mysql:host={$cfg['host']};port={$cfg['port']};dbname={$cfg['dbname']};charset={$cfg['charset']}";
+                    $gameDb = new \PDO($dsn, $cfg['username'], $cfg['password']);
+                    $gameDb->prepare("UPDATE users SET username = ? WHERE uid = ?")->execute([$newUsername, $u['game_uid']]);
+                } catch (\Exception $e) {}
+            }
+        }
+
         foreach (['email', 'phone', 'ingame_name'] as $field) {
             if (isset($_POST[$field])) {
                 $fields[] = "$field = ?";
@@ -132,13 +148,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($fields)) {
             $params[] = $userId;
-            $db->query("UPDATE users SET " . implode(', ', $fields) . " WHERE id = ?", $params);
-            $message = 'User updated';
+            $db->query("UPDATE shop_users SET " . implode(', ', $fields) . " WHERE id = ?", $params);
+            $message = 'User updated successfully (synced to game)';
         }
     }
 }
 
-$users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, is_admin, is_active, created_at FROM users ORDER BY is_admin DESC, id");
+$users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, is_admin, is_active, created_at FROM shop_users ORDER BY is_admin DESC, id");
 ?>
 <div class="admin-header">
     <h2><i class="fas fa-users-cog"></i> User Management</h2>
@@ -273,10 +289,11 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
                                 <form method="POST" style="display: flex; flex-direction: column; gap: 0.3rem;">
                                     <input type="hidden" name="action" value="edit_user">
                                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                    <input type="text" name="username" class="form-control" placeholder="Username (synced to game)" value="<?= htmlspecialchars($user['username']) ?>" style="padding: 0.3rem;">
                                     <input type="text" name="email" class="form-control" placeholder="Email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" style="padding: 0.3rem;">
                                     <input type="text" name="phone" class="form-control" placeholder="Phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" style="padding: 0.3rem;">
                                     <input type="text" name="ingame_name" class="form-control" placeholder="In-Game Name" value="<?= htmlspecialchars($user['ingame_name'] ?? '') ?>" style="padding: 0.3rem;">
-                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save</button>
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save (synced)</button>
                                 </form>
                             </div>
                         </td>

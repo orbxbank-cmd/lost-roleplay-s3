@@ -56,17 +56,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$categories = $db->fetchAll("SELECT * FROM categories ORDER BY sort_order");
+$categories = $db->fetchAll("SELECT * FROM shop_categories ORDER BY sort_order");
 $products = $db->fetchAll("
     SELECT p.*, c.name as category_name
-    FROM products p
+    FROM shop_products p
     JOIN categories c ON p.category_id = c.id
     ORDER BY c.sort_order, p.id
 ");
 $message = $_GET['msg'] ?? '';
 $editProduct = null;
 if (isset($_GET['edit'])) {
-    $editProduct = $db->fetch("SELECT * FROM products WHERE id = ?", [(int)$_GET['edit']]);
+    $editProduct = $db->fetch("SELECT * FROM shop_products WHERE id = ?", [(int)$_GET['edit']]);
 }
 ?>
 <div class="admin-header">

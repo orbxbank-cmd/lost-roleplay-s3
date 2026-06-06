@@ -7,7 +7,7 @@ $requests = [];
 $tableExists = true;
 
 try {
-    $db->fetch("SELECT 1 FROM unban_requests LIMIT 1");
+    $db->fetch("SELECT 1 FROM shop_unban_requests LIMIT 1");
 } catch (\Exception $e) {
     $tableExists = false;
     $error = 'The unban_requests table does not exist. Run the migration SQL to create it.';
@@ -33,7 +33,7 @@ if ($tableExists && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actio
 
 if ($tableExists) {
     try {
-        $requests = $db->fetchAll("SELECT ur.*, u.username as local_username FROM unban_requests ur LEFT JOIN users u ON ur.user_id = u.id ORDER BY FIELD(ur.status, 'pending', 'approved', 'rejected'), ur.created_at DESC");
+        $requests = $db->fetchAll("SELECT ur.*, u.username as local_username FROM shop_unban_requests ur LEFT JOIN shop_users u ON ur.user_id = u.id ORDER BY FIELD(ur.status, 'pending', 'approved', 'rejected'), ur.created_at DESC");
     } catch (\Exception $e) {
         $error = 'Error loading requests: ' . $e->getMessage();
     }

@@ -96,7 +96,23 @@ class GameDelivery
         $delivery = $this->localDb->fetch(
             "SELECT d.*, o.ingame_name as order_ingame, o.customer_name
              FROM shop_deliveries d
-             JOIN shop_orders o ON o.id = d.order_id
+             LEFT JOIN shop_orders o ON o.id = d.order_id
+             WHERE d.id = ?",
+            [$deliveryId]
+        );
+
+        if (!$delivery) {
+            return ['success' => false, 'error' => 'Delivery not found'];
+        }
+
+        return $this->processDelivery($delivery);
+    }
+
+    public function processDeliveryByIdDirect(int $deliveryId): array
+    {
+        $delivery = $this->localDb->fetch(
+            "SELECT d.*, '' as order_ingame, '' as customer_name
+             FROM shop_deliveries d
              WHERE d.id = ?",
             [$deliveryId]
         );

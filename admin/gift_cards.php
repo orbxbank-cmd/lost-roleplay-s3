@@ -11,7 +11,7 @@ $tableExists = true;
 
 // Check if table exists
 try {
-    $db->fetch("SELECT 1 FROM gift_cards LIMIT 1");
+    $db->fetch("SELECT 1 FROM shop_gift_cards LIMIT 1");
 } catch (\Exception $e) {
     $tableExists = false;
     $message = 'The gift_cards table does not exist. Run the migration SQL to create it.';
@@ -39,14 +39,14 @@ if ($tableExists && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'clear_all') {
-        $db->query("DELETE FROM gift_cards");
+        $db->query("DELETE FROM shop_gift_cards");
         \Core\Logger::info("All gift cards deleted by admin");
         $message = "All gift cards have been deleted.";
     }
 
     if ($action === 'toggle') {
         $id = (int)$_POST['id'];
-        $card = $db->fetch("SELECT * FROM gift_cards WHERE id = ?", [$id]);
+        $card = $db->fetch("SELECT * FROM shop_gift_cards WHERE id = ?", [$id]);
         if ($card && !$card['used_by']) {
             $newStatus = $card['is_active'] ? 0 : 1;
             $db->update('gift_cards', ['is_active' => $newStatus], 'id = :id', ['id' => $id]);
@@ -57,7 +57,7 @@ if ($tableExists && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if ($tableExists) {
     try {
-        $cards = $db->fetchAll("SELECT gc.*, creator.username as creator_name, redeemer.username as redeemer_name FROM gift_cards gc LEFT JOIN users creator ON gc.created_by = creator.id LEFT JOIN users redeemer ON gc.used_by = redeemer.id ORDER BY gc.created_at DESC LIMIT 100");
+        $cards = $db->fetchAll("SELECT gc.*, creator.username as creator_name, redeemer.username as redeemer_name FROM shop_gift_cards gc LEFT JOIN shop_users creator ON gc.created_by = creator.id LEFT JOIN shop_users redeemer ON gc.used_by = redeemer.id ORDER BY gc.created_at DESC LIMIT 100");
     } catch (\Exception $e) {
         $message = 'Error loading gift cards: ' . $e->getMessage();
         $messageType = 'danger';

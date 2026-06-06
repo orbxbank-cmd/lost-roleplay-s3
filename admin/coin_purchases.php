@@ -9,10 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $purchaseId = (int)$_POST['purchase_id'];
 
     if ($_POST['action'] === 'confirm') {
-        $purchase = $db->fetch("SELECT * FROM coin_purchases WHERE id = ?", [$purchaseId]);
+        $purchase = $db->fetch("SELECT * FROM shop_coin_purchases WHERE id = ?", [$purchaseId]);
         if ($purchase && $purchase['status'] === 'pending') {
             $db->update('coin_purchases', ['status' => 'confirmed'], 'id = :id', ['id' => $purchaseId]);
-            $db->query("UPDATE users SET coins = coins + ? WHERE id = ?", [$purchase['coins'], $purchase['user_id']]);
+            $db->query("UPDATE shop_users SET coins = coins + ? WHERE id = ?", [$purchase['coins'], $purchase['user_id']]);
             $db->insert('coin_transactions', [
                 'user_id' => $purchase['user_id'],
                 'amount' => $purchase['coins'],
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit;
 }
 
-$purchases = $db->fetchAll("SELECT cp.*, u.username FROM coin_purchases cp LEFT JOIN users u ON cp.user_id = u.id ORDER BY cp.created_at DESC");
+$purchases = $db->fetchAll("SELECT cp.*, u.username FROM coin_purchases cp LEFT JOIN shop_users u ON cp.user_id = u.id ORDER BY cp.created_at DESC");
 ?>
 <div class="admin-header">
     <h2>🪙 Coin Purchase Requests</h2>

@@ -54,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['distribute'])) {
                     $reward = (int)round($reward);
 
                     // Check if user exists in local shop DB
-                    $local = $db->fetch("SELECT id FROM users WHERE game_uid = ?", [$p['uid']]);
+                    $local = $db->fetch("SELECT id FROM shop_users WHERE game_uid = ?", [$p['uid']]);
                     if ($local) {
-                        $db->query("UPDATE users SET coins = coins + ? WHERE id = ?", [$reward, $local['id']]);
+                        $db->query("UPDATE shop_users SET coins = coins + ? WHERE id = ?", [$reward, $local['id']]);
                         $db->insert('coin_transactions', [
                             'user_id' => $local['id'],
                             'amount' => $reward,

@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $statusFilter = $_GET['status'] ?? '';
 $paymentFilter = $_GET['payment'] ?? '';
 
-$sql = "SELECT * FROM orders WHERE 1=1";
+$sql = "SELECT * FROM shop_orders WHERE 1=1";
 $params = [];
 
 if ($statusFilter) {
