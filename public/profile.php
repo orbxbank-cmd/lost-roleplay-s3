@@ -53,8 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_coins'])) {
 
     if (!$validPackage || empty($paymentMethod)) {
         $error = 'Invalid package or payment method';
-    } elseif (!isset($_FILES['proof']) || $_FILES['proof']['error'] !== UPLOAD_ERR_OK) {
-        $error = 'Please upload a payment proof screenshot';
+    } elseif (!isset($_FILES['proof'])) {
+        $error = 'Please upload a payment proof screenshot (file input empty)';
+    } elseif ($_FILES['proof']['error'] !== UPLOAD_ERR_OK) {
+        $uploadErrors = [
+            UPLOAD_ERR_INI_SIZE => 'File exceeds PHP upload limit (max 10MB)',
+            UPLOAD_ERR_FORM_SIZE => 'File exceeds form size limit',
+            UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+            UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+            UPLOAD_ERR_NO_TMP_DIR => 'Server error: missing temp directory',
+            UPLOAD_ERR_CANT_WRITE => 'Server error: failed to write file',
+            UPLOAD_ERR_EXTENSION => 'Upload blocked by server extension',
+        ];
+        $error = $uploadErrors[$_FILES['proof']['error']] ?? 'Upload failed (error ' . $_FILES['proof']['error'] . ')';
     } else {
         $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'];
         $ext = strtolower(pathinfo($_FILES['proof']['name'], PATHINFO_EXTENSION));
