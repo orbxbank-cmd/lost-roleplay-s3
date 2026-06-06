@@ -300,16 +300,20 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
                                 </form>
                             </div>
 
-                            <!-- Edit Form (hidden) -->
-                            <div id="edit-form-<?= $user['id'] ?>" style="display: none; margin-top: 0.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem;">
+                            <!-- Edit Form (visible by default) -->
+                            <div id="edit-form-<?= $user['id'] ?>" style="margin-top: 0.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem;">
                                 <form method="POST" style="display: flex; flex-direction: column; gap: 0.3rem;">
                                     <input type="hidden" name="action" value="edit_user">
                                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                    <input type="text" name="username" class="form-control" placeholder="Username (synced to game)" value="<?= htmlspecialchars($user['username']) ?>" style="padding: 0.3rem;">
-                                    <input type="password" name="password" class="form-control" placeholder="New password (leave empty to keep)" style="padding: 0.3rem;">
-                                    <input type="text" name="email" class="form-control" placeholder="Email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" style="padding: 0.3rem;">
-                                    <input type="text" name="phone" class="form-control" placeholder="Phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" style="padding: 0.3rem;">
-                                    <input type="text" name="ingame_name" class="form-control" placeholder="In-Game Name" value="<?= htmlspecialchars($user['ingame_name'] ?? '') ?>" style="padding: 0.3rem;">
+                                    <div style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+                                        <input type="text" name="username" class="form-control" placeholder="Username (synced to game)" value="<?= htmlspecialchars($user['username']) ?>" style="flex:1;min-width:120px;padding:0.3rem;">
+                                        <input type="password" name="password" class="form-control" placeholder="New password" style="flex:1;min-width:120px;padding:0.3rem;">
+                                    </div>
+                                    <div style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+                                        <input type="text" name="email" class="form-control" placeholder="Email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" style="flex:1;min-width:100px;padding:0.3rem;">
+                                        <input type="text" name="phone" class="form-control" placeholder="Phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" style="flex:1;min-width:100px;padding:0.3rem;">
+                                        <input type="text" name="ingame_name" class="form-control" placeholder="In-Game Name" value="<?= htmlspecialchars($user['ingame_name'] ?? '') ?>" style="flex:1;min-width:100px;padding:0.3rem;">
+                                    </div>
                                     <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save (synced to game)</button>
                                 </form>
                             </div>
@@ -320,21 +324,5 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
         </tbody>
     </table>
 </div>
-
-<script>
-function toggleCoinForm(id) {
-    const form = document.getElementById('coin-form-' + id);
-    const editForm = document.getElementById('edit-form-' + id);
-    if (editForm) editForm.style.display = 'none';
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-}
-
-function toggleEditForm(id) {
-    const form = document.getElementById('edit-form-' + id);
-    const coinForm = document.getElementById('coin-form-' + id);
-    if (coinForm) coinForm.style.display = 'none';
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-}
-</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
