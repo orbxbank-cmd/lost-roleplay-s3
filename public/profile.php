@@ -104,6 +104,32 @@ $purchases = $db->fetchAll(
     [$user['id']]
 );
 
+// Get VIP info
+$userVip = $db->fetch("
+    SELECT uv.*, vp.name as plan_name, vp.level, vp.daily_coins, vp.color 
+    FROM shop_user_vip uv 
+    JOIN shop_vip_plans vp ON uv.plan_id = vp.id 
+    WHERE uv.user_id = ? AND uv.is_active = 1 AND uv.end_date > NOW() 
+    ORDER BY uv.end_date DESC LIMIT 1
+", [$user['id']]);
+
+// Auto-claim daily VIP coins on profile visit
+if ($userVip) {
+    $today = date('Y-m-d');
+    if ($userVip['last_daily'] !== $today) {
+        $db->query("UPDATE shop_users SET coins = coins + ? WHERE id = ?", [$userVip['daily_coins'], $user['id']]);
+        $db->query("UPDATE shop_user_vip SET last_daily = ? WHERE id = ?", [$today, $userVip['id']]);
+        $db->insert('coin_transactions', [
+            'user_id' => $user['id'],
+            'amount' => $userVip['daily_coins'],
+            'type' => 'bonus',
+            'description' => 'VIP Daily Coins (' . $userVip['plan_name'] . ')'
+        ]);
+        $user['coins'] += $userVip['daily_coins'];
+        $success = '🎉 Received ' . $userVip['daily_coins'] . ' VIP daily coins!';
+    }
+}
+
 // Get referral info
 $referralCode = $user['referral_code'] ?? '';
 $referralCount = $db->fetch("SELECT COUNT(*) as cnt FROM shop_users WHERE referred_by = ?", [$user['id']])['cnt'] ?? 0;
@@ -189,9 +215,12 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="profile-info">
                     <h3>
                         <?= htmlspecialchars($user['username']) ?>
-                        <?php if (!empty($user['is_youtuber'])): ?>
-                            <span style="display:inline-block;background:#ff4444;color:#fff;font-size:0.7rem;padding:2px 8px;border-radius:4px;font-weight:700;vertical-align:middle;"><i class="fab fa-youtube"></i> YouTuber</span>
-                        <?php endif; ?>
+                            <?php if (!empty($user['is_youtuber'])): ?>
+                                <span style="display:inline-block;background:#ff4444;color:#fff;font-size:0.7rem;padding:2px 8px;border-radius:4px;font-weight:700;vertical-align:middle;"><i class="fab fa-youtube"></i> YouTuber</span>
+                            <?php endif; ?>
+                            <?php if ($userVip): ?>
+                                <span style="display:inline-block;background:<?= $userVip['color'] ?>;color:#000;font-size:0.7rem;padding:2px 8px;border-radius:4px;font-weight:700;vertical-align:middle;"><i class="fas fa-crown"></i> <?= htmlspecialchars($userVip['plan_name']) ?></span>
+                            <?php endif; ?>
                     </h3>
                     <?php if ($user['ingame_name']): ?>
                         <p class="text-muted"><i class="fas fa-gamepad"></i> <?= htmlspecialchars($user['ingame_name']) ?></p>

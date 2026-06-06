@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS shop_daily_missions (
   active TINYINT(1) DEFAULT 1
 ) ENGINE=InnoDB;
 
-INSERT INTO shop_daily_missions (type, label, target, reward) VALUES
+INSERT IGNORE INTO shop_daily_missions (type, label, target, reward) VALUES
 ('wheel_spins', 'Spin the Lucky Wheel', 1, 10),
 ('dn_plays', 'Play Guess the Number', 3, 15),
 ('dice_plays', 'Play Dice Duel', 3, 15),
@@ -241,6 +241,35 @@ CREATE TABLE IF NOT EXISTS shop_login_logs (
   FOREIGN KEY (user_id) REFERENCES shop_users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS shop_vip_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  level INT NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  duration_days INT NOT NULL,
+  daily_coins INT NOT NULL,
+  price_coins INT NOT NULL,
+  description TEXT,
+  color VARCHAR(20) DEFAULT '#ffc107',
+  is_active TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO shop_vip_plans (level, name, duration_days, daily_coins, price_coins, description, color) VALUES
+(1, 'VIP Bronze', 7, 50, 50, '50 coins daily • 7 days • Bronze role', '#cd7f32'),
+(2, 'VIP Silver', 30, 100, 250, '100 coins daily • 30 days • Silver role • Priority support', '#c0c0c0'),
+(3, 'VIP Gold', 90, 150, 500, '150 coins daily • 90 days • Gold role • Priority support • Exclusive items', '#ffd700');
+
+CREATE TABLE IF NOT EXISTS shop_user_vip (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  plan_id INT NOT NULL,
+  start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  end_date TIMESTAMP NOT NULL,
+  last_daily DATE DEFAULT NULL,
+  is_active TINYINT(1) DEFAULT 1,
+  FOREIGN KEY (user_id) REFERENCES shop_users(id) ON DELETE CASCADE,
+  FOREIGN KEY (plan_id) REFERENCES shop_vip_plans(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS shop_recovery_requests (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT DEFAULT NULL,
@@ -256,7 +285,7 @@ CREATE TABLE IF NOT EXISTS shop_recovery_requests (
 ) ENGINE=InnoDB;
 
 -- Default data
-INSERT INTO shop_categories (name, slug, icon, sort_order) VALUES
+INSERT IGNORE INTO shop_categories (name, slug, icon, sort_order) VALUES
 ('Admin', 'admin', 'shield', 1),
 ('Cars', 'cars', 'car', 2),
 ('House & Job', 'house-job', 'home', 3),
@@ -264,7 +293,7 @@ INSERT INTO shop_categories (name, slug, icon, sort_order) VALUES
 ('Boosts', 'boosts', 'trending-up', 6),
 ('Promos', 'promos', 'gift', 7);
 
-INSERT INTO shop_products (category_id, name, description, price, coin_price, badge, is_popular, image) VALUES
+INSERT IGNORE INTO shop_products (category_id, name, description, price, coin_price, badge, is_popular, image) VALUES
 (1, 'Admin Level 1', 'Upgrade your admin level to 1', 30.00, 30, NULL, 0, 'admin.jfif'),
 (1, 'Admin Level 10', 'Upgrade your admin level to 10', 120.00, 120, 'Best Seller', 1, 'admin.jfif'),
 (1, 'Admin Level 30 (MAX)', 'Upgrade to max admin level 30', 200.00, 200, 'MAX', 0, 'admin.jfif'),
@@ -289,14 +318,14 @@ INSERT INTO shop_products (category_id, name, description, price, coin_price, ba
 (1, 'Name Change', 'Change your in-game name', 10.00, 10, NULL, 0, 'admin.jfif'),
 (1, 'Password Reset', 'Reset your account password', 10.00, 10, NULL, 0, 'admin.jfif');
 
-INSERT INTO shop_payment_methods (name, code, instructions, sort_order) VALUES
+INSERT IGNORE INTO shop_payment_methods (name, code, instructions, sort_order) VALUES
 ('Inwi', 'inwi', 'حول المبلغ إلى رقم Inwi: 0780589707 وأرسل صورة الإيداع', 1),
 ('Cash Plus', 'cashplus', 'أودع المبلغ في أي وكالة Cash Plus وأرسل الوصل', 2),
 ('Wafacash', 'wafacash', 'أودع المبلغ في أي وكالة Wafacash وأرسل الوصل', 3),
 ('CIH Bank', 'cih', 'حول المبلغ إلى حساب CIH Bank وأرسل الإشعار', 4);
 
-INSERT INTO shop_users (username, password, is_admin) VALUES
+INSERT IGNORE INTO shop_users (username, password, is_admin) VALUES
 ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1);
 
-INSERT INTO shop_bundles (name, total_price) VALUES ('Admin + Cars Pack', 35.00);
-INSERT INTO shop_bundle_products (bundle_id, product_id, quantity) VALUES (1, 1, 1), (1, 4, 1);
+INSERT IGNORE INTO shop_bundles (name, total_price) VALUES ('Admin + Cars Pack', 35.00);
+INSERT IGNORE INTO shop_bundle_products (bundle_id, product_id, quantity) VALUES (1, 1, 1), (1, 4, 1);

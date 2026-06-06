@@ -52,6 +52,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
                         <span class="user-nav-coins"><i class="fas fa-coins" style="color:var(--accent);"></i> <?= number_format($userInfo['coins'] ?? 0) ?></span>
                     </a>
                 </li>
+                <li><a href="vip.php" class="<?= $currentPage === 'vip.php' ? 'active' : '' ?>"><i class="fas fa-crown"></i> VIP</a></li>
                 <li><a href="security.php" class="<?= $currentPage === 'security.php' ? 'active' : '' ?>"><i class="fas fa-shield-alt"></i> Security</a></li>
                 <li><a href="orders.php" class="<?= $currentPage === 'orders.php' ? 'active' : '' ?>"><i class="fas fa-clipboard-list"></i> Orders</a></li>
                 <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -93,6 +94,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         <?php if (\Core\Auth::isLoggedIn()): ?>
             <li><a href="sendcoins.php" class="<?= $currentPage === 'sendcoins.php' ? 'active' : '' ?>"><i class="fas fa-paper-plane"></i> Send Coins</a></li>
             <li><a href="profile.php" class="<?= $currentPage === 'profile.php' ? 'active' : '' ?>"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="vip.php" class="<?= $currentPage === 'vip.php' ? 'active' : '' ?>"><i class="fas fa-crown"></i> VIP</a></li>
             <li><a href="security.php" class="<?= $currentPage === 'security.php' ? 'active' : '' ?>"><i class="fas fa-shield-alt"></i> Security</a></li>
             <li><a href="orders.php" class="<?= $currentPage === 'orders.php' ? 'active' : '' ?>"><i class="fas fa-clipboard-list"></i> Orders</a></li>
             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
