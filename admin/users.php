@@ -123,12 +123,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fields = [];
         $params = [];
 
+        $u = $db->fetch("SELECT game_uid FROM shop_users WHERE id = ?", [$userId]);
+
         if (isset($_POST['username']) && trim($_POST['username']) !== '') {
             $newUsername = trim($_POST['username']);
             $fields[] = "username = ?";
             $params[] = $newUsername;
-            // Also update in-game name if game_uid exists
-            $u = $db->fetch("SELECT game_uid FROM shop_users WHERE id = ?", [$userId]);
             if ($u && $u['game_uid']) {
                 try {
                     $cfg = require __DIR__ . '/../config/game_database.php';
@@ -137,6 +137,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $gameDb->prepare("UPDATE users SET username = ? WHERE uid = ?")->execute([$newUsername, $u['game_uid']]);
                 } catch (\Exception $e) {}
             }
+        }
+
+        if (isset($_POST['password']) && trim($_POST['password']) !== '') {
+            $newPass = trim($_POST['password']);
+            if ($u && $u['game_uid']) {
+                try {
+                    $cfg = require __DIR__ . '/../config/game_database.php';
+                    $dsn = "mysql:host={$cfg['host']};port={$cfg['port']};dbname={$cfg['dbname']};charset={$cfg['charset']}";
+                    $gameDb = new \PDO($dsn, $cfg['username'], $cfg['password']);
+                    $whirlpool = strtoupper(hash('whirlpool', $newPass));
+                    $gameDb->prepare("UPDATE users SET password = ? WHERE uid = ?")->execute([$whirlpool, $u['game_uid']]);
+                } catch (\Exception $e) {}
+            }
+            $bcrypt = password_hash($newPass, PASSWORD_DEFAULT);
+            $fields[] = "password = ?";
+            $params[] = $bcrypt;
         }
 
         foreach (['email', 'phone', 'ingame_name'] as $field) {
@@ -149,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($fields)) {
             $params[] = $userId;
             $db->query("UPDATE shop_users SET " . implode(', ', $fields) . " WHERE id = ?", $params);
-            $message = 'User updated successfully (synced to game)';
+            $message = 'User updated — synced to game DB (Whirlpool)';
         }
     }
 }
@@ -290,10 +306,11 @@ $users = $db->fetchAll("SELECT id, username, email, phone, ingame_name, coins, i
                                     <input type="hidden" name="action" value="edit_user">
                                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                     <input type="text" name="username" class="form-control" placeholder="Username (synced to game)" value="<?= htmlspecialchars($user['username']) ?>" style="padding: 0.3rem;">
+                                    <input type="password" name="password" class="form-control" placeholder="New password (leave empty to keep)" style="padding: 0.3rem;">
                                     <input type="text" name="email" class="form-control" placeholder="Email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" style="padding: 0.3rem;">
                                     <input type="text" name="phone" class="form-control" placeholder="Phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" style="padding: 0.3rem;">
                                     <input type="text" name="ingame_name" class="form-control" placeholder="In-Game Name" value="<?= htmlspecialchars($user['ingame_name'] ?? '') ?>" style="padding: 0.3rem;">
-                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save (synced)</button>
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save (synced to game)</button>
                                 </form>
                             </div>
                         </td>
