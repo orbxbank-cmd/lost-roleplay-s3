@@ -29,9 +29,9 @@ try {
 
     // 2. Update VIP plan prices
     $updates = [
-        "UPDATE shop_vip_plans SET price_coins = 500, duration_days = 7 WHERE level = 1",
-        "UPDATE shop_vip_plans SET price_coins = 1000, duration_days = 14 WHERE level = 2",
-        "UPDATE shop_vip_plans SET price_coins = 2000, duration_days = 30 WHERE level = 3",
+        "UPDATE shop_vip_plans SET price_coins = 200, daily_coins = 70, duration_days = 7 WHERE level = 1",
+        "UPDATE shop_vip_plans SET price_coins = 400, daily_coins = 75, duration_days = 14 WHERE level = 2",
+        "UPDATE shop_vip_plans SET price_coins = 800, daily_coins = 68, duration_days = 30 WHERE level = 3",
     ];
     foreach ($updates as $sql) {
         $pdo->exec($sql);
