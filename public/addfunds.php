@@ -11,31 +11,25 @@ $config = require __DIR__ . '/../config/app.php';
 $user = \Core\Auth::user();
 
 $paymentMethods = $db->fetchAll("SELECT * FROM shop_payment_methods WHERE is_active = 1 ORDER BY sort_order");
-
-$coinPackages = [
-    ['coins' => 100, 'price' => 10, 'label' => '100 Coins'],
-    ['coins' => 300, 'price' => 25, 'label' => '300 Coins'],
-    ['coins' => 500, 'price' => 40, 'label' => '500 Coins (Popular)'],
-    ['coins' => 1000, 'price' => 70, 'label' => '1000 Coins (Best Value)'],
-    ['coins' => 2500, 'price' => 150, 'label' => '2500 Coins'],
-    ['coins' => 5000, 'price' => 250, 'label' => '5000 Coins'],
-];
+$coinPackages = $config['coin_packages'];
 
 $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $selectedCoins = (int)($_POST['coins'] ?? 0);
+    $packageId = (int)($_POST['package_id'] ?? 0);
     $paymentMethod = $_POST['payment_method'] ?? '';
     $proofFile = null;
 
     $package = null;
     foreach ($coinPackages as $p) {
-        if ($p['coins'] === $selectedCoins) {
+        if (($p['id'] ?? 0) === $packageId) {
             $package = $p;
             break;
         }
     }
+
+    $selectedCoins = $package ? $package['coins'] : 0;
 
     if (!$package) {
         $error = 'Invalid package selected.';
@@ -93,7 +87,7 @@ require_once __DIR__ . '/includes/header.php';
             <h3 style="margin-bottom: 1rem;">Choose a Package</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <?php foreach ($coinPackages as $pkg): ?>
-                    <div class="payment-method" onclick="selectPackage(this, <?= $pkg['coins'] ?>, <?= $pkg['price'] ?>)" style="cursor:pointer;">
+                    <div class="payment-method" onclick="selectPackage(this, <?= $pkg['id'] ?>, <?= $pkg['coins'] ?>, <?= $pkg['price'] ?>)" style="cursor:pointer;">
                         <div class="pm-icon">🪙</div>
                         <div class="pm-name"><?= $pkg['label'] ?></div>
                         <div style="font-weight: 700; color: var(--accent); font-size: 1.2rem;"><?= $pkg['price'] ?> dh</div>
@@ -102,7 +96,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <form method="POST" enctype="multipart/form-data" id="funds-form" style="margin-top: 2rem;">
-                <input type="hidden" name="coins" id="selected-coins" value="">
+                <input type="hidden" name="package_id" id="selected-package" value="">
 
                 <div class="form-group">
                     <label>Payment Method *</label>
@@ -177,10 +171,10 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>
 let selectedPackage = null;
-function selectPackage(el, coins, price) {
+function selectPackage(el, id, coins, price) {
     document.querySelectorAll('.payment-method').forEach(pm => pm.classList.remove('selected'));
     el.classList.add('selected');
-    document.getElementById('selected-coins').value = coins;
+    document.getElementById('selected-package').value = id;
     document.getElementById('package-preview').style.display = 'block';
     document.getElementById('preview-label').textContent = coins.toLocaleString() + ' Coins';
     document.getElementById('preview-price').textContent = price + ' dh';

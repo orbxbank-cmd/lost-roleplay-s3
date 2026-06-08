@@ -14,9 +14,10 @@ return [
     'debug' => getenv('APP_DEBUG') === 'true',
     'signup_bonus_coins' => 100,
     'coin_packages' => [
-        ['coins' => 100, 'price' => 10, 'label' => '100 Coins'],
-        ['coins' => 500, 'price' => 40, 'label' => '500 Coins'],
-        ['coins' => 1000, 'price' => 70, 'label' => '1000 Coins'],
-        ['coins' => 5000, 'price' => 300, 'label' => '5000 Coins'],
+        ['id' => 1, 'coins' => 100, 'price' => 10, 'label' => '100 Coins'],
+        ['id' => 2, 'coins' => 500, 'price' => 20, 'label' => '500 Coins Weekly'],
+        ['id' => 3, 'coins' => 500, 'price' => 40, 'label' => '500 Coins'],
+        ['id' => 4, 'coins' => 1000, 'price' => 70, 'label' => '1000 Coins'],
+        ['id' => 5, 'coins' => 5000, 'price' => 300, 'label' => '5000 Coins'],
     ],
 ];
