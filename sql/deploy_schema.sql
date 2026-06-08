@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS shop_deliveries (
   quantity INT DEFAULT 1,
   status ENUM('pending','completed','failed') DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  metadata JSON DEFAULT NULL,
   completed_at TIMESTAMP NULL DEFAULT NULL,
   FOREIGN KEY (order_id) REFERENCES shop_orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
