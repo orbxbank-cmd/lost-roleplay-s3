@@ -255,9 +255,9 @@ CREATE TABLE IF NOT EXISTS shop_vip_plans (
 ) ENGINE=InnoDB;
 
 INSERT IGNORE INTO shop_vip_plans (level, name, duration_days, daily_coins, price_coins, description, color) VALUES
-(1, 'VIP Bronze', 7, 50, 50, '50 coins daily • 7 days • Bronze role', '#cd7f32'),
-(2, 'VIP Silver', 30, 100, 250, '100 coins daily • 30 days • Silver role • Priority support', '#c0c0c0'),
-(3, 'VIP Gold', 90, 150, 500, '150 coins daily • 90 days • Gold role • Priority support • Exclusive items', '#ffd700');
+(1, 'VIP Bronze', 7, 50, 500, '50 coins daily • 7 days • Bronze role • Auto-renew', '#cd7f32'),
+(2, 'VIP Silver', 14, 100, 1000, '100 coins daily • 14 days • Silver role • Priority support • Auto-renew', '#c0c0c0'),
+(3, 'VIP Gold', 30, 150, 2000, '150 coins daily • 30 days • Gold role • Priority support • Exclusive items • Auto-renew', '#ffd700');
 
 CREATE TABLE IF NOT EXISTS shop_user_vip (
   id INT AUTO_INCREMENT PRIMARY KEY,

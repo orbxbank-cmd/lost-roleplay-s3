@@ -117,7 +117,44 @@ $purchases = $db->fetchAll(
 
 // Get VIP info
 $userVip = $db->fetch("
-    SELECT uv.*, vp.name as plan_name, vp.level, vp.daily_coins, vp.color 
+    SELECT uv.*, vp.name as plan_name, vp.level, vp.daily_coins, vp.price_coins, vp.duration_days, vp.color 
+    FROM shop_user_vip uv 
+    JOIN shop_vip_plans vp ON uv.plan_id = vp.id 
+    WHERE uv.user_id = ? AND uv.is_active = 1 AND uv.end_date > NOW() 
+    ORDER BY uv.end_date DESC LIMIT 1
+", [$user['id']]);
+
+// Auto-renew expired VIP
+if (!$userVip) {
+    $expired = $db->fetch("
+        SELECT uv.*, vp.name as plan_name, vp.price_coins, vp.duration_days 
+        FROM shop_user_vip uv 
+        JOIN shop_vip_plans vp ON uv.plan_id = vp.id 
+        WHERE uv.user_id = ? AND uv.is_active = 1 AND uv.end_date <= NOW() 
+        ORDER BY uv.end_date DESC LIMIT 1
+    ", [$user['id']]);
+    if ($expired) {
+        $expSince = time() - strtotime($expired['end_date']);
+        if ($expSince < 86400 && $user['coins'] >= $expired['price_coins']) {
+            $db->query("UPDATE shop_users SET coins = coins - ? WHERE id = ?", [$expired['price_coins'], $user['id']]);
+            $db->query("UPDATE shop_user_vip SET end_date = DATE_ADD(NOW(), INTERVAL ? DAY), last_daily = NULL WHERE id = ?", [$expired['duration_days'], $expired['id']]);
+            $db->insert('coin_transactions', [
+                'user_id' => $user['id'],
+                'amount' => -$expired['price_coins'],
+                'type' => 'payment',
+                'description' => 'VIP Auto-Renew: ' . $expired['plan_name']
+            ]);
+            $user['coins'] -= $expired['price_coins'];
+            $success = 'VIP ' . $expired['plan_name'] . ' auto-renewed!';
+        } else {
+            $db->query("UPDATE shop_user_vip SET is_active = 0 WHERE id = ?", [$expired['id']]);
+        }
+    }
+}
+
+// Refresh VIP after potential renewal
+$userVip = $db->fetch("
+    SELECT uv.*, vp.name as plan_name, vp.level, vp.daily_coins, vp.price_coins, vp.duration_days, vp.color 
     FROM shop_user_vip uv 
     JOIN shop_vip_plans vp ON uv.plan_id = vp.id 
     WHERE uv.user_id = ? AND uv.is_active = 1 AND uv.end_date > NOW() 
@@ -137,7 +174,7 @@ if ($userVip) {
             'description' => 'VIP Daily Coins (' . $userVip['plan_name'] . ')'
         ]);
         $user['coins'] += $userVip['daily_coins'];
-        $success = '🎉 Received ' . $userVip['daily_coins'] . ' VIP daily coins!';
+        $success = 'Received ' . $userVip['daily_coins'] . ' VIP daily coins!';
     }
 }
 
