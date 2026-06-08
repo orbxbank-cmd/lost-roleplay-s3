@@ -23,4 +23,8 @@ RUN echo "date.timezone = Africa/Casablanca" > /usr/local/etc/php/conf.d/timezon
 RUN echo "upload_max_filesize = 10M" > /usr/local/etc/php/conf.d/uploads.ini && \
     echo "post_max_size = 12M" >> /usr/local/etc/php/conf.d/uploads.ini
 
+RUN chmod +x /var/www/html/docker-entrypoint.sh
+
+ENTRYPOINT ["/var/www/html/docker-entrypoint.sh"]
+
 EXPOSE 80
