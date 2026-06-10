@@ -13,7 +13,7 @@ return [
     'items_per_page' => 20,
     'session_lifetime' => 86400,
     'debug' => getenv('APP_DEBUG') === 'true',
-    'signup_bonus_coins' => 100,
+    'signup_bonus_coins' => 0,
     'coin_packages' => [
         ['id' => 1, 'coins' => 100, 'price' => 10, 'label' => '100 Coins'],
         ['id' => 2, 'coins' => 500, 'price' => 20, 'label' => '500 Coins Weekly'],
