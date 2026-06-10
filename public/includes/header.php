@@ -35,6 +35,32 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         <ul class="navbar-links">
             <li><a href="index.php" class="<?= $currentPage === 'index.php' ? 'active' : '' ?>"><i class="fas fa-home"></i> Home</a></li>
             <li><a href="shop.php" class="<?= $currentPage === 'shop.php' ? 'active' : '' ?>"><i class="fas fa-store"></i> Shop</a></li>
+            <li><a href="games.php" class="<?= $currentPage === 'games.php' ? 'active' : '' ?>"><i class="fas fa-gamepad"></i> Games</a></li>
+            <li><a href="badges.php" class="<?= $currentPage === 'badges.php' ? 'active' : '' ?>"><i class="fas fa-medal"></i> Badges</a></li>
+            <li><a href="referral.php" class="<?= $currentPage === 'referral.php' ? 'active' : '' ?>"><i class="fas fa-gift"></i> Referral</a></li>
+            <li><a href="cart.php" class="<?= $currentPage === 'cart.php' ? 'active' : '' ?>"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-badge" style="display:none;">0</span></a></li>
+            <?php if (\Core\Auth::isLoggedIn()):
+                $userInfo = \Core\Auth::user();
+                $refCount = $db->fetch("SELECT COUNT(*) as cnt FROM shop_users WHERE referred_by = ?", [$userInfo['id']])['cnt'] ?? 0;
+                $orderCount = $db->fetch("SELECT COUNT(*) as cnt FROM shop_orders WHERE user_id = ? AND order_status NOT IN ('cancelled')", [$userInfo['id']])['cnt'] ?? 0; ?>
+                <li><a href="sendcoins.php" class="<?= $currentPage === 'sendcoins.php' ? 'active' : '' ?>"><i class="fas fa-paper-plane"></i> Send</a></li>
+                <li>
+                    <a href="profile.php" class="user-nav <?= $currentPage === 'profile.php' ? 'active' : '' ?>">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-nav-name"><?= htmlspecialchars(\Core\Auth::username()) ?></span>
+                        <span class="user-nav-coins"><i class="fas fa-coins" style="color:var(--accent);"></i> <?= number_format($userInfo['coins'] ?? 0) ?></span>
+                    </a>
+                </li>
+                <li><a href="vip.php" class="<?= $currentPage === 'vip.php' ? 'active' : '' ?>"><i class="fas fa-crown"></i> VIP</a></li>
+                <li><a href="security.php" class="<?= $currentPage === 'security.php' ? 'active' : '' ?>"><i class="fas fa-shield-alt"></i> Security</a></li>
+                <li><a href="orders.php" class="<?= $currentPage === 'orders.php' ? 'active' : '' ?>"><i class="fas fa-clipboard-list"></i> Orders</a></li>
+                <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <?php else: ?>
+                <li><a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            <?php endif; ?>
+        </ul>
+    </div>
+</nav>
 
 <!-- Mobile Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
