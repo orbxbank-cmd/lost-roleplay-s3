@@ -339,7 +339,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.8rem;">
                         <input type="text" id="referral-code-input" class="form-control" value="<?= htmlspecialchars($referralCode) ?>" readonly style="width: 150px; text-align: center; font-weight: 800; font-size: 1.1rem; letter-spacing: 2px;">
                         <button class="btn btn-primary btn-sm" onclick="copyReferralCode()" style="white-space: nowrap;"><i class="fas fa-copy"></i> Copy</button>
-                        <a href="https://wa.me/?text=Join%20Lost%20Roleplay%20S03!%20Use%20my%20referral%20code%3A%20<?= urlencode($referralCode) ?>%20at%20http://localhost/lost-roleplay-shop/public/login.php" target="_blank" class="btn btn-success btn-sm" style="white-space: nowrap;"><i class="fab fa-whatsapp"></i> Share</a>
+                        <a href="https://wa.me/?text=Join%20Lost%20Roleplay%20S03!%20Use%20my%20referral%20code%3A%20<?= urlencode($referralCode) ?>%20at%20https://lost-roleplay-s3.onrender.com" target="_blank" class="btn btn-success btn-sm" style="white-space: nowrap;"><i class="fab fa-whatsapp"></i> Share</a>
                     </div>
                     <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; padding-top: 0.8rem; border-top: 1px solid var(--border);">
                         <div style="text-align: center;">

@@ -2,7 +2,7 @@
 
 return [
     'app_name' => 'Lost RoLePLay S03',
-    'app_url' => getenv('APP_URL') ?: 'http://localhost/lost-roleplay-shop',
+    'app_url' => getenv('APP_URL') ?: 'https://lost-roleplay-s3.onrender.com',
     'timezone' => 'Africa/Casablanca',
     'currency' => 'MAD',
     'currency_symbol' => 'DH',

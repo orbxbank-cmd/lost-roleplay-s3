@@ -13,8 +13,6 @@ $stats = [
     'pending_payments' => $db->fetch("SELECT COUNT(*) as count FROM shop_orders WHERE payment_status = 'pending'")['count'],
 ];
 
-$pendingApps = $db->fetch("SELECT COUNT(*) as count FROM shop_staff_applications WHERE status = 'pending'")['count'];
-
 $recentOrders = $db->fetchAll("SELECT * FROM shop_orders ORDER BY created_at DESC LIMIT 10");
 ?>
 <div class="admin-header">
@@ -46,10 +44,6 @@ $recentOrders = $db->fetchAll("SELECT * FROM shop_orders ORDER BY created_at DES
     <div class="stat-card">
         <div class="stat-value"><?= $stats['users'] ?></div>
         <div class="stat-label"><i class="fas fa-users"></i> Users</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value" style="color: <?= $pendingApps > 0 ? 'var(--warning)' : 'var(--text-muted)' ?>;"><?= $pendingApps ?></div>
-        <div class="stat-label"><i class="fas fa-clipboard-check"></i> Pending Applications</div>
     </div>
 </div>
 

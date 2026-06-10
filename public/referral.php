@@ -53,7 +53,7 @@ require_once __DIR__ . '/includes/header.php';
                         <span style="display:inline-block;background:<?= $tierColor ?>;color:#000;padding:2px 12px;border-radius:4px;font-weight:700;font-size:0.85rem;"><i class="fas fa-<?= $tierIcon ?>"></i> <?= $tier ?></span>
                     </div>
                     <?php endif; ?>
-                    <a href="https://wa.me/?text=Join%20Lost%20Roleplay%20S03!%20Use%20my%20referral%20code%3A%20<?= urlencode($referralCode) ?>%20at%20http://localhost/lost-roleplay-shop/public/login.php" target="_blank" class="btn btn-success" style="margin-right: 0.5rem;"><i class="fab fa-whatsapp"></i> Share on WhatsApp</a>
+                    <a href="https://wa.me/?text=Join%20Lost%20Roleplay%20S03!%20Use%20my%20referral%20code%3A%20<?= urlencode($referralCode) ?>%20at%20https://lost-roleplay-s3.onrender.com" target="_blank" class="btn btn-success" style="margin-right: 0.5rem;"><i class="fab fa-whatsapp"></i> Share on WhatsApp</a>
                     <a href="profile.php" class="btn btn-secondary"><i class="fas fa-user"></i> My Profile</a>
                 <?php else: ?>
                     <a href="login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login & Get Your Code</a>

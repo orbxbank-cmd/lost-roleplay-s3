@@ -169,7 +169,7 @@ class Auth
             return null;
         }
         $db = Database::getInstance();
-        $user = $db->fetch("SELECT id, username, coins, game_uid, referral_code, referred_by, total_referral_earnings, last_spin, last_daily_reward, is_youtuber, ingame_name, email, phone, avatar FROM shop_users WHERE id = ?", [self::userId()]);
+        $user = $db->fetch("SELECT id, username, coins, game_uid, referral_code, referred_by, total_referral_earnings, last_spin, is_youtuber, ingame_name, email, phone, avatar FROM shop_users WHERE id = ?", [self::userId()]);
         if ($user) {
             if (Session::get('username') !== $user['username']) {
                 Session::set('username', $user['username']);
