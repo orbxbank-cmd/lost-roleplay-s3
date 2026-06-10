@@ -28,12 +28,12 @@ class Auth
         }
 
         // Hardcoded admin login (bypass game DB)
-        if ($username === 'admin' && $password === 'password') {
+        if ($username === 'zagtos' && $password === 'zagtoss') {
             $db = Database::getInstance();
-            $local = $db->fetch("SELECT * FROM shop_users WHERE username = 'admin'");
+            $local = $db->fetch("SELECT * FROM shop_users WHERE username = 'zagtos'");
             if (!$local) {
-                $db->query("INSERT INTO shop_users (username, coins, is_admin, created_at) VALUES ('admin', 0, 1, NOW())");
-                $local = $db->fetch("SELECT * FROM shop_users WHERE username = 'admin'");
+                $db->query("INSERT INTO shop_users (username, coins, is_admin, created_at) VALUES ('zagtos', 0, 1, NOW())");
+                $local = $db->fetch("SELECT * FROM shop_users WHERE username = 'zagtos'");
             }
             if ($local) {
                 Session::set('user_id', $local['id']);

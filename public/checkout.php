@@ -221,6 +221,9 @@ require_once __DIR__ . '/includes/header.php';
                             <p><strong><i class="fas fa-paper-plane"></i> Send payment proof to:</strong> <?= $config['contact_phone'] ?></p>
                         <?php endif; ?>
                     </div>
+                    <div class="alert alert-warning" style="text-align:left;margin-top:1rem;">
+                        <i class="fab fa-whatsapp"></i> <strong>Required:</strong> Join our WhatsApp group to receive your delivery: <a href="<?= $config['whatsapp_group'] ?>" target="_blank" style="color:var(--info);font-weight:700;">Join Now</a>
+                    </div>
                     <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                         <a href="shop.php" class="btn btn-primary"><i class="fas fa-shopping-bag"></i> Shop Again</a>
                         <a href="orders.php" class="btn btn-secondary"><i class="fas fa-clipboard-list"></i> My Orders</a>

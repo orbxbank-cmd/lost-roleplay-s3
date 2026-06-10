@@ -9,6 +9,7 @@ return [
     'contact_phone' => '0780589707',
     'server_name' => 'Lost Roleplay S03',
     'server_ip' => '151.242.16.244:7777',
+    'whatsapp_group' => 'https://chat.whatsapp.com/E9HjMePMsalBUEHScBfiw4',
     'items_per_page' => 20,
     'session_lifetime' => 86400,
     'debug' => getenv('APP_DEBUG') === 'true',
